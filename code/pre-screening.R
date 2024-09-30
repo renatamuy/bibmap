@@ -17,7 +17,13 @@ nrow(narrower)
 
 length(narrower$DOI %in% broader$DOI)
 
-broader$Title
+broader$Title[!broader$DOI %in% narrower$DOI]
+
+broader_not_in_narrower <- data.frame(Title = broader$Title[!broader$DOI %in% narrower$DOI])
+
+setwd('data/pre-screening')
+
+write.table(broader_not_in_narrower, file='titles_broader_not_in_narrower.txt', row.names=F)
 
 # Wordcould of broader
 
