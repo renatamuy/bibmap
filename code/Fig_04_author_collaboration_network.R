@@ -9,6 +9,16 @@
 library(rcrossref)
 library(igraph)
 library(dplyr)
+require(here)
+require(ggrepel)
+require(ggraph)
+
+setwd('data')
+list.files()
+
+df <- xlsx::read.xlsx("bibmap_variables_prelim.xlsx", sheetIndex = 1, startRow=1)
+
+head(df)
 
 windowsFonts()
 
@@ -55,6 +65,9 @@ dois <- c(
   "10.1007/s40823-024-00096-3",
   "10.1371/journal.pcbi.1010362")
 
+dois <- df$DOI[1:135] #valid rows
+
+dois
 
 # create receiving object
 author_edges <- list()
@@ -99,10 +112,13 @@ set.seed(123)
 
 # Export
 
-png(filename = 'figures/collab_network.png', res = 300, units = 'cm', width = 20, height = 20 )
+
+setwd('../figures')
+
+# bad viz with reg plot 
 
 plot(author_network, 
-  vertex.size = 10,    
+  vertex.size = 8,    
   vertex.shape = "circle",
   vertex.label.cex = 0.9,                 
   vertex.label.color = "black",         
@@ -112,8 +128,56 @@ plot(author_network,
   edge.color = adjustcolor("gray", alpha.f = 0.5), 
   edge.width = 2, 
   edge.curved=0.3,
-  layout = layout_nicely,                    
+  layout = layout.fruchterman.reingold, #layout_nicely,                    
   main = "Author Collaborations")
+
+dev.off()
+
+#cluster
+
+cluster <- cluster_louvain(author_network)
+
+V(author_network)$color <- cluster$membership
+
+degree_values <- degree(author_network)  
+
+table(degree_values)
+summary(degree_values)
+
+V(author_network)$color <- ifelse(degree_values > 7, "firebrick", "steelblue")
+
+# repel and gggraph is better
+
+set.seed(123)
+
+
+jpeg(filename = 'Figure_04_7plus.jpg', res = 400, units = 'cm', width = 20, height = 20 )
+
+ggraph(author_network, layout = "fr") +  
+  geom_edge_link(aes(edge_alpha = 1), show.legend = FALSE) +  
+  geom_node_point(aes(color = color), size = 5) +  # Color nodes based on degree
+  geom_text_repel(aes(x = x, y = y, label = name),  
+                  size = 2, box.padding = 0.5, point.padding = 0.5) +
+  scale_color_identity() +  # Use the colors defined earlier
+  theme_void() +  
+  labs(title = "Author Network")
+
+dev.off()
+
+#dd ---------------------------------------------------------------------------------------
+
+degree_df <- data.frame(degree = degree_values)
+
+arrange(degree_df,degree)
+
+summary(degree_df$degree)
+
+jpeg(filename = 'Figure_dd.jpg', res = 400, units = 'cm', width = 20, height = 20 )
+
+ggplot(degree_df, aes(x = degree)) + 
+  geom_histogram(binwidth = 1, fill = "royalblue", color = "black", alpha = 0.7) +
+  labs(title = "", x = "Individual author collaborations", y = "Frequency") +
+  theme_minimal()
 
 dev.off()
 
