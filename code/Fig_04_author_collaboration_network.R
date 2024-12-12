@@ -1,5 +1,6 @@
 # From DOI to network
-# Renata Muylaert - 2024
+# Renata Muylaert - 2024 
+# R version 4.4.1 
 #-------------------------------------------------------------------------------------------------------------
 
 # Packages
@@ -20,11 +21,10 @@ setwd('data')
 
 list.files()
 
-df <- xlsx::read.xlsx("bibmap_variables_prelim4.xlsx", sheetIndex = 1, startRow=1)
+# Open csv 
+df <- read.csv("bibmap_variables.csv")
 
-df <- df[1:133, 1:16]
-
-head(df)
+tail(df)
 
 windowsFonts()
 
@@ -99,16 +99,15 @@ edges_df$from <- sapply(edges_df$from, extract_last_name_initials)
 edges_df$to <- sapply(edges_df$to, extract_last_name_initials)
 
 
-# Correcting edges 
+# Correcting edges  - STILL BUILDING! Feel free to play with string correction!
 # 'Mello M.A.' to 'Mello M.A.R.'
-
 # Use anchor $ to avoid nested matches and subs (like M.A.R.R.)
 
 edges_df <- edges_df %>% 
   mutate(across(where(is.character), ~ gsub("\\bMello M\\.A\\.$", "Mello M.A.R.", .))) %>% 
   mutate(across(where(is.character), ~ gsub("^SALDAÑA-VÁZQUEZ R\\.A\\.$", "Saldaña-Vázquez R.A.", .)))
 
-# Check edges
+# Check edges!
 
 unique(edges_df$from)
 unique(edges_df$to) 
@@ -117,6 +116,7 @@ table(edges_df$to== 'Mello M.A.R.R')
 
 unique(edges_df$from)
 
+# Check edges! Not completely done!
 
 xlsx::write.xlsx(edges_df, "edges_df.xlsx")
 
@@ -150,7 +150,7 @@ plot(author_network,
 
 dev.off()
 
-#cluster
+# Modules
 
 cluster <- cluster_louvain(author_network)
 
@@ -167,7 +167,7 @@ summary(degree_values)
 #V(author_network)$color <- ifelse(degree_values > 7, "firebrick", "steelblue")
 
 
-# repel and gggraph is better
+# repel and gggraph is better but we still need improvement
 
 setwd('../figures')
 
@@ -186,8 +186,7 @@ ggraph(author_network, layout = "fr") +
 
 dev.off()
 
-
-# nodes neutral
+# all nodes blue
 
 V(author_network)$color <-  "steelblue"
 
@@ -205,7 +204,6 @@ ggraph(author_network, layout = "fr") +
   labs(title = "Author collaboration network")
 
 dev.off()
-
 
 # Names as nodes?
 jpeg(filename = 'Figure_04_name_nodes.jpg', res = 400, units = 'cm', width = 20, height = 20 )
