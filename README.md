@@ -5,5 +5,10 @@ Code workflow for the draft 'Connections in the Dark: Social-Ecological Networks
  
 # 29/09/2023
 
-* Task 1 :white_check_mark:
-* Task 2 :soon:
+* Warming up :white_check_mark:
+
+# 13/12/2023
+
+* Data ready :white_check_mark:
+* Figures coded :white_check_mark:
+* Collab network: Marco playing with it :soon:
