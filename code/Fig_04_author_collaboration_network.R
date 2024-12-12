@@ -9,6 +9,22 @@
 library(rcrossref)
 library(igraph)
 library(dplyr)
+require(here)
+require(ggrepel)
+require(ggraph)
+require(here)
+
+setwd(here())
+
+setwd('data')
+
+list.files()
+
+df <- xlsx::read.xlsx("bibmap_variables_prelim4.xlsx", sheetIndex = 1, startRow=1)
+
+df <- df[1:133, 1:16]
+
+head(df)
 
 windowsFonts()
 
@@ -49,12 +65,9 @@ extract_last_name_initials <- function(name) {
 
 # DOI vector input
 
-dois <- c(
-  "10.1038/s41559-019-1002-3",
-  "10.3390/v16071154",
-  "10.1007/s40823-024-00096-3",
-  "10.1371/journal.pcbi.1010362")
+dois <- df$DOI
 
+dois
 
 # create receiving object
 author_edges <- list()
@@ -85,8 +98,14 @@ edges_df <- do.call(rbind, lapply(author_edges, function(edge) {
 edges_df$from <- sapply(edges_df$from, extract_last_name_initials)
 edges_df$to <- sapply(edges_df$to, extract_last_name_initials)
 
-# Check 
-edges_df
+# Check manually
+
+view(edges_df)
+
+xlsx::write.xlsx(edges_df, "edges_df.xlsx")
+
+# Mello M.A.
+
 
 # df to graph
 author_network <- graph_from_data_frame(d = edges_df, directed = FALSE)
@@ -94,15 +113,17 @@ author_network <- graph_from_data_frame(d = edges_df, directed = FALSE)
 # Check 
 author_network
 
+
 # plot network
 set.seed(123)
 
 # Export
+setwd('../figures')
 
-png(filename = 'figures/collab_network.png', res = 300, units = 'cm', width = 20, height = 20 )
+# bad viz with reg plot 
 
 plot(author_network, 
-  vertex.size = 10,    
+  vertex.size = 8,    
   vertex.shape = "circle",
   vertex.label.cex = 0.9,                 
   vertex.label.color = "black",         
@@ -112,8 +133,61 @@ plot(author_network,
   edge.color = adjustcolor("gray", alpha.f = 0.5), 
   edge.width = 2, 
   edge.curved=0.3,
-  layout = layout_nicely,                    
+  layout = layout.fruchterman.reingold, #layout_nicely,                    
   main = "Author Collaborations")
+
+dev.off()
+
+#cluster
+
+cluster <- cluster_louvain(author_network)
+
+length(unique(cluster$membership))
+
+V(author_network)$color <- cluster$membership
+
+degree_values <- degree(author_network)  
+
+table(degree_values)
+summary(degree_values)
+
+# Collaboration number as colour
+#V(author_network)$color <- ifelse(degree_values > 7, "firebrick", "steelblue")
+
+# repel and gggraph is better
+
+setwd('../figures')
+
+set.seed(123)
+
+jpeg(filename = 'Figure_04_louvain_clusters.jpg', res = 400, units = 'cm', width = 20, height = 20 )
+
+ggraph(author_network, layout = "fr") +  
+  geom_edge_link(aes(edge_alpha = 1), show.legend = FALSE) +  
+  geom_node_point(aes(color = color), size = 5) +  # Color nodes based on degree
+  geom_text_repel(aes(x = x, y = y, label = name),  
+                  size = 2, box.padding = 0.5, point.padding = 0.5) +
+  scale_color_identity() +  # Use the colors defined earlier
+  theme_void() +  
+  labs(title = "Author collaboration network")
+
+dev.off()
+
+
+#dd ---------------------------------------------------------------------------------------
+
+degree_df <- data.frame(degree = degree_values)
+
+arrange(degree_df,degree)
+
+summary(degree_df$degree)
+
+jpeg(filename = 'Figure_dd.jpg', res = 400, units = 'cm', width = 20, height = 20 )
+
+ggplot(degree_df, aes(x = degree)) + 
+  geom_histogram(binwidth = 1, fill = "royalblue", color = "black", alpha = 0.7) +
+  labs(title = "", x = "Individual author collaborations", y = "Frequency") +
+  theme_minimal()
 
 dev.off()
 
