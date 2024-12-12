@@ -1,13 +1,13 @@
 # bibmap
-Code workflow for the draft 'Connections in the Dark: Social-Ecological Networks as a Tool for Bat Conservation' by Muylaert et al.
+Code workflow for Muylaert et al.
 
 # tasks
  
-# 29/09/2023
+# 29/09/2024
 
 * Warming up :white_check_mark:
 
-# 13/12/2023
+# 13/12/2024
 
 * Data ready :white_check_mark:
 * Figures coded :white_check_mark:
