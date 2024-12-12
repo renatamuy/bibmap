@@ -17,7 +17,7 @@ setwd('data')
 
 list.files()
 
-df <- xlsx::read.xlsx("bibmap_variables_prelim4.xlsx", sheetIndex = 1, startRow=1)
+df <- xlsx::read.xlsx("bibmap_variables.xlsx", sheetIndex = 1, startRow=1)
 
 tail(df[1:133,])
 
