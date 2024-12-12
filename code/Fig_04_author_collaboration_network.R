@@ -98,21 +98,33 @@ edges_df <- do.call(rbind, lapply(author_edges, function(edge) {
 edges_df$from <- sapply(edges_df$from, extract_last_name_initials)
 edges_df$to <- sapply(edges_df$to, extract_last_name_initials)
 
-# Check manually
 
-view(edges_df)
+# Correcting edges 
+# 'Mello M.A.' to 'Mello M.A.R.'
+
+# Use anchor $ to avoid nested matches and subs (like M.A.R.R.)
+
+edges_df <- edges_df %>% 
+  mutate(across(where(is.character), ~ gsub("\\bMello M\\.A\\.$", "Mello M.A.R.", .))) %>% 
+  mutate(across(where(is.character), ~ gsub("^SALDAÑA-VÁZQUEZ R\\.A\\.$", "Saldaña-Vázquez R.A.", .)))
+
+# Check edges
+
+unique(edges_df$from)
+unique(edges_df$to) 
+table(edges_df$to== 'Mello M.A.')
+table(edges_df$to== 'Mello M.A.R.R')
+
+unique(edges_df$from)
+
 
 xlsx::write.xlsx(edges_df, "edges_df.xlsx")
-
-# Mello M.A.
-
 
 # df to graph
 author_network <- graph_from_data_frame(d = edges_df, directed = FALSE)
 
 # Check 
 author_network
-
 
 # plot network
 set.seed(123)
@@ -154,6 +166,7 @@ summary(degree_values)
 # Collaboration number as colour
 #V(author_network)$color <- ifelse(degree_values > 7, "firebrick", "steelblue")
 
+
 # repel and gggraph is better
 
 setwd('../figures')
@@ -164,15 +177,48 @@ jpeg(filename = 'Figure_04_louvain_clusters.jpg', res = 400, units = 'cm', width
 
 ggraph(author_network, layout = "fr") +  
   geom_edge_link(aes(edge_alpha = 1), show.legend = FALSE) +  
-  geom_node_point(aes(color = color), size = 5) +  # Color nodes based on degree
+  geom_node_point(aes(color = color), size = 5) + 
   geom_text_repel(aes(x = x, y = y, label = name),  
                   size = 2, box.padding = 0.5, point.padding = 0.5) +
-  scale_color_identity() +  # Use the colors defined earlier
+  scale_color_identity() + 
   theme_void() +  
   labs(title = "Author collaboration network")
 
 dev.off()
 
+
+# nodes neutral
+
+V(author_network)$color <-  "steelblue"
+
+set.seed(123)
+
+jpeg(filename = 'Figure_04_blue.jpg', res = 400, units = 'cm', width = 20, height = 20 )
+
+ggraph(author_network, layout = "fr") +  
+  geom_edge_link(aes(edge_alpha = 1), show.legend = FALSE) +  
+  geom_node_point(aes(color = color), size = 5) +  
+  geom_text_repel(aes(x = x, y = y, label = name),  
+                  size = 2, box.padding = 0.5, point.padding = 0.5                  ) +
+  scale_color_identity() +  
+  theme_void() +  
+  labs(title = "Author collaboration network")
+
+dev.off()
+
+
+# Names as nodes?
+jpeg(filename = 'Figure_04_name_nodes.jpg', res = 400, units = 'cm', width = 20, height = 20 )
+
+ggraph(author_network, layout = "fr") +  
+  geom_edge_link(aes(edge_alpha = 1), show.legend = FALSE) +  # Show edges
+  geom_text_repel(aes(x = x, y = y, label = name),  # Display labels as text
+                  size = 2, box.padding = 0.5, point.padding = 0.5,
+                  max.overlaps = 40) +  # Increase max overlaps
+  scale_color_identity() + 
+  theme_void() +  
+  labs(title = "Author collaboration network")
+dev.off()
 
 #dd ---------------------------------------------------------------------------------------
 

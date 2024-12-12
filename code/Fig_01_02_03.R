@@ -121,26 +121,54 @@ studies_per_2years <- dfy %>%
   group_by(Year) %>%                  
   summarise(Count = n())  
 
+# cumulative
+df$Year_Binned <- cut(df$Year, breaks = seq(2006, 2024, by = 2))
+                      
+year_counts <- table(df$Year_Binned)
+
+# Create cumulative counts
+cumulative_counts <- cumsum(year_counts)
+
+# Create the data frame for plotting
+plot_data <- data.frame(
+  Year_Range = names(cumulative_counts),
+  Cumulative_Count = cumulative_counts
+)
+
+# Option - cumulative bar plot
+
+jpeg(filename = 'Figure_cumulative.jpg', res = 400, units = 'cm', width = 14, height = 10 )
+
+ggplot(plot_data, aes(x = Year_Range, y = Cumulative_Count)) +
+  geom_bar(stat = "identity", fill = "royalblue", color = "black") +
+  labs(title = "", x = "Year", y = "Cumulative number of studies") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+dev.off()
+
 
 # Fig 1
 setwd('../figures')
 
+studies_per_2years$lab <- c('2006-2007','2008-2009', '2010-2011',
+                            '2012-2013', '2014-2015', 
+                            '2016-2017', '2018-2019', '2020-2021', '2022-2023', '2024')
+  
 jpeg(filename = 'Figure_01.jpg', res = 400, units = 'cm', width = 14, height = 10 )
 
-ggplot(studies_per_2years, aes(x = Year, y = Count)) +
+ggplot(studies_per_2years, aes(x = lab, y = Count)) +
   geom_bar(stat = "identity", fill = "royalblue") +
-  scale_x_continuous(
-    breaks = seq(min(studies_per_year$Year), max(studies_per_year$Year), by = 2)
-  ) +
   labs(
     title = "",
     x = "Year",
-    y = "Number of Studies"
+    y = "Number of studies"
   ) +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
+
 dev.off()
 
 
