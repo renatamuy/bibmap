@@ -1,7 +1,11 @@
-# From DOI to network
-# Renata Muylaert - 2024 
-# R version 4.4.1 
-#-------------------------------------------------------------------------------------------------------------
+# bibmap
+# This repo is a supplement to the manuscript:
+# Muylaert et al., in prep. Connections in the Dark: Network Science and 
+# Social-Ecological Networks as Tools for Bat Conservation and Public Health.
+# Global Union of Bat Diversity Networks (GBatNet).
+# See README for further info:
+# https://github.com/renatamuy/bibmap/blob/main/README.md
+
 
 # Packages
 #install.packages(c("rcrossref", "igraph", "dplyr"))
