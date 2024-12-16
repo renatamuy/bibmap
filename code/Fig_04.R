@@ -8,31 +8,60 @@
 
 
 # Packages
-#install.packages(c("rcrossref", "igraph", "dplyr"))
+if(!require(devtools)){
+  install.packages("devtools")
+  library(devtools)
+}
 
-# Load
-library(rcrossref)
-library(igraph)
-library(dplyr)
-require(here)
-require(ggrepel)
-require(ggraph)
-require(here)
+if(!require(dplyr)){
+  install.packages("dplyr")
+  library(dplyr)
+}
 
-setwd(here())
+if(!require(ggraph)){
+  install.packages("ggraph")
+  library(ggraph)
+}
 
-setwd('data')
+if(!require(ggrepel)){
+  install.packages("ggrepel")
+  library(ggrepel)
+}
 
+if(!require(here)){
+  install.packages("here")
+  library(here)
+}
+
+if(!require(igraph)){
+  install.packages("igraph")
+  library(igraph)
+}
+
+if(!require(rcrossref)){
+  install.packages("rcrossref")
+  library(rcrossref)
+}
+
+
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+getwd()
+
+rm(list= ls())
+
+setwd("../data")
+getwd()
 list.files()
 
-# Open csv 
 df <- read.csv("bibmap_variables.csv")
 
 tail(df)
 
-windowsFonts()
+windowsFonts() #Please replace. Does not work in any OS other than Windows.
 
-# Cumstom functions ------------------------------------------------------------------------------------------
+
+######################## COSTUM FUNCTIONS ######################################
+
 
 # Retrieve author data from a DOI!
 get_authors_from_doi <- function(doi) {
@@ -64,7 +93,8 @@ extract_last_name_initials <- function(name) {
   return(paste(last_name, paste0(initials, "."), sep = " "))       
 }
 
-#-------------------------------------------------------------------------------------------------------------
+
+######################### DOI > AUTHORS ########################################
 
 
 # DOI vector input
@@ -130,14 +160,17 @@ author_network <- graph_from_data_frame(d = edges_df, directed = FALSE)
 # Check 
 author_network
 
+
+######################### COAUTORSHIP NETWORK ##################################
+
+
 # plot network
 set.seed(123)
 
 # Export
 setwd('../figures')
 
-# bad viz with reg plot 
-
+# plain viz with reg plot 
 plot(author_network, 
   vertex.size = 8,    
   vertex.shape = "circle",
@@ -155,7 +188,6 @@ plot(author_network,
 dev.off()
 
 # Modules
-
 cluster <- cluster_louvain(author_network)
 
 length(unique(cluster$membership))
@@ -167,17 +199,15 @@ degree_values <- degree(author_network)
 table(degree_values)
 summary(degree_values)
 
-# Collaboration number as colour
-#V(author_network)$color <- ifelse(degree_values > 7, "firebrick", "steelblue")
-
-
-# repel and gggraph is better but we still need improvement
-
 setwd('../figures')
 
 set.seed(123)
 
-jpeg(filename = 'Figure_04_louvain_clusters.jpg', res = 400, units = 'cm', width = 20, height = 20 )
+jpeg(filename = 'Figure_04_louvain_clusters.jpg',
+     res = 300,
+     units = 'px', 
+     width = 5000,
+     height = 5000)
 
 ggraph(author_network, layout = "fr") +  
   geom_edge_link(aes(edge_alpha = 1), show.legend = FALSE) +  
@@ -190,39 +220,9 @@ ggraph(author_network, layout = "fr") +
 
 dev.off()
 
-# all nodes blue
 
-V(author_network)$color <-  "steelblue"
+########################### DEGREE #############################################
 
-set.seed(123)
-
-jpeg(filename = 'Figure_04_blue.jpg', res = 400, units = 'cm', width = 20, height = 20 )
-
-ggraph(author_network, layout = "fr") +  
-  geom_edge_link(aes(edge_alpha = 1), show.legend = FALSE) +  
-  geom_node_point(aes(color = color), size = 5) +  
-  geom_text_repel(aes(x = x, y = y, label = name),  
-                  size = 2, box.padding = 0.5, point.padding = 0.5                  ) +
-  scale_color_identity() +  
-  theme_void() +  
-  labs(title = "Author collaboration network")
-
-dev.off()
-
-# Names as nodes?
-jpeg(filename = 'Figure_04_name_nodes.jpg', res = 400, units = 'cm', width = 20, height = 20 )
-
-ggraph(author_network, layout = "fr") +  
-  geom_edge_link(aes(edge_alpha = 1), show.legend = FALSE) +  # Show edges
-  geom_text_repel(aes(x = x, y = y, label = name),  # Display labels as text
-                  size = 2, box.padding = 0.5, point.padding = 0.5,
-                  max.overlaps = 40) +  # Increase max overlaps
-  scale_color_identity() + 
-  theme_void() +  
-  labs(title = "Author collaboration network")
-dev.off()
-
-#dd ---------------------------------------------------------------------------------------
 
 degree_df <- data.frame(degree = degree_values)
 
@@ -233,10 +233,10 @@ summary(degree_df$degree)
 jpeg(filename = 'Figure_dd.jpg', res = 400, units = 'cm', width = 20, height = 20 )
 
 ggplot(degree_df, aes(x = degree)) + 
-  geom_histogram(binwidth = 1, fill = "royalblue", color = "black", alpha = 0.7) +
+  geom_histogram(binwidth = 1, fill = "#7D9D33", color = "#7D9D33", alpha = 0.7) +
   labs(title = "", x = "Individual author collaborations", y = "Frequency") +
   theme_minimal()
 
 dev.off()
 
-#-------------------------------------------------------------------------------------
+################################################################################

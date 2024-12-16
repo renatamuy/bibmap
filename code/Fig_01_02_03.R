@@ -7,18 +7,52 @@
 # https://github.com/renatamuy/bibmap/blob/main/README.md
 
 
-require(RColorBrewer)
-require(tidyverse)
-library(forcats)
-require(Manu)
-library(rnaturalearth)
-library(rnaturalearthdata)
-library(here)        
+# Packages
+if(!require(devtools)){
+  install.packages("devtools")
+  library(devtools)
+}
 
-setwd(here())
+if(!require(forcats)){
+  install.packages("forcats")
+  library(forcats)
+}
 
-setwd('data')
+if(!require(here)){
+  install.packages("here")
+  library(here)
+}
 
+devtools::install_github("G-Thomson/Manu")
+library(Manu)
+
+if(!require(RColorBrewer)){
+  install.packages("RColorBrewer")
+  library(RColorBrewer)
+}
+
+if(!require(rnaturalearth)){
+  install.packages("rnaturalearth")
+  library(rnaturalearth)
+}
+
+if(!require(rnaturalearthdata)){
+  install.packages("rnaturalearthdata")
+  library(rnaturalearthdata)
+}
+
+if(!require(tidyverse)){
+  install.packages("tidyverse")
+  library(tidyverse)
+}
+
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+getwd()
+
+rm(list= ls())
+
+setwd("../data")
+getwd()
 list.files()
 
 df <- xlsx::read.xlsx("bibmap_variables.xlsx", sheetIndex = 1, startRow=1)
@@ -54,12 +88,11 @@ table(df$Mode)
 table(df$Weight)
 # Most nextwork types evaluated were weighted, followed by binary of both
 
-
-# Figure 1
-
 df$Links_EE <- fct_infreq(df$Links_EE)
 
-# Figure 2 
+
+########################## FIGURE 2 ############################################
+
 
 setwd('../figures')
 
@@ -110,7 +143,9 @@ jpeg(filename = 'Figure_02.jpg', res = 400, units = 'cm', width = 20, height = 1
 
 dev.off()
 
-# Figure 1- growth
+
+########################## FIGURE 1 ############################################
+
 
 dfy <- data.frame(Number = df$Number, Year= df$Year)
 
@@ -140,19 +175,19 @@ plot_data <- data.frame(
 )
 
 # Option - cumulative bar plot
-
-jpeg(filename = 'Figure_cumulative.jpg', res = 400, units = 'cm', width = 14, height = 10 )
+jpeg(filename = 'Figure_01_cumulative.jpg', res = 400, units = 'cm', width = 14, height = 10 )
 
 ggplot(plot_data, aes(x = Year_Range, y = Cumulative_Count)) +
-  geom_bar(stat = "identity", fill = "royalblue", color = "black") +
-  labs(title = "", x = "Year", y = "Cumulative number of studies") +
+  geom_bar(stat = "identity", fill = "#7D9D33", color = "#7D9D33") + 
+  #It's better to make it consistent with the Kakapo palette used in Fig2
+  labs(title = "", x = "Year", y = "Cumulative number of studies") + 
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 
 dev.off()
 
 
-# Fig 1
+# Figure 1 - noncumulative
 setwd('../figures')
 
 studies_per_2years$lab <- c('2006-2007','2008-2009', '2010-2011',
@@ -162,7 +197,7 @@ studies_per_2years$lab <- c('2006-2007','2008-2009', '2010-2011',
 jpeg(filename = 'Figure_01.jpg', res = 400, units = 'cm', width = 14, height = 10 )
 
 ggplot(studies_per_2years, aes(x = lab, y = Count)) +
-  geom_bar(stat = "identity", fill = "royalblue") +
+  geom_bar(stat = "identity", fill = "#7D9D33") + #Kakaperized too  
   labs(
     title = "",
     x = "Year",
@@ -176,7 +211,8 @@ ggplot(studies_per_2years, aes(x = lab, y = Count)) +
 dev.off()
 
 
-# -------------
+########################## FIGURE 3 ############################################
+
 
 table(df$Country_or_Region)
 
@@ -248,7 +284,7 @@ dfc$Geo_general
 
 dfc <- dfc %>%
   mutate(
-    fill_color = ifelse(Geo_general %in% c("Global", "Multicountry", "In silico"), "#BCA888", "royalblue")
+    fill_color = ifelse(Geo_general %in% c("Global", "Multicountry", "In silico"), "#DCC949", "#7D9D33")
   )
 
 
@@ -273,34 +309,48 @@ ggplot(dfc, aes(x = Geo_general, y = Count, fill = fill_color)) +
 
 dev.off()
 
+
+########################## SUPPLEMENT FIGURE S4 ################################
+
+
 # Map - removing studies with global or vague regional mentions (keeping only named countries)
+
+head(df)
 
 country_hits <- df %>%
   distinct(Number, .keep_all = TRUE) %>% 
-  filter(!is.na(Geo)) %>% 
-  separate_rows(Geo, sep = ", ") %>% 
-  filter(!Geo %in% c('In silico', "Global", "Neotropical", "Neotropics and Europe", "North Africa", "Europe")) %>% # Exclude vague regions
-  group_by(Geo) %>%
+  filter(!is.na(Geo_general)) %>% 
+  separate_rows(Geo_general, sep = ", ") %>% 
+  filter(!Geo_general %in% c('In silico', "Global", "Neotropical", "Neotropics and Europe", "North Africa", "Europe")) %>% # Exclude vague regions
+  group_by(Geo_general) %>%
   summarize(Hits = n()) %>%
   ungroup()
 
+head(country_hits)
 tail(country_hits)
-
 
 world <- ne_countries(scale = "medium", returnclass = "sf")
 
 world$name
 
 map_data <- world %>%
-  left_join(country_hits, by = c("name" = "Geo"))
+  left_join(country_hits, by = c("name" = "Geo_general"))
+
+head(map_data)
 
 # Export fig
 jpeg(filename = 'Figure_S4.jpg', res = 400, units = 'cm', width = 14, height = 10 )
 
 ggplot(map_data) +
   geom_sf(aes(fill = Hits), color = "gray70", size = 0.2) +
-  scale_fill_viridis_c(
-    option = "plasma",
+  scale_colour_gradient2(
+    low = "#7D9D33",   #Kakaperized
+    mid = "#DCC949",
+    high = "#775B24",
+    midpoint = 10,
+    space = "Lab",
+    guide = "colourbar",
+    aesthetics = "fill",
     na.value = "lightgray",
     name = "Number of studies"
   ) +

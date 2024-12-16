@@ -1,6 +1,6 @@
 # bibmap
 
-Research weaving (sensu [Nakagawa et al. 2019](https://doi.org/10.1016/j.tree.2018.11.007)) applied to the data set compiled through a systematic review. This repo is a supplement to the manuscript:
+Research weaving (*sensu* [Nakagawa et al. 2019](https://doi.org/10.1016/j.tree.2018.11.007)) applied to the data set compiled through a systematic review. This repo is a supplement to the manuscript:
 
 *Muylaert et al., in prep. Connections in the Dark: Network Science and Social-Ecological Networks as Tools for Bat Conservation and Public Health.*
 
