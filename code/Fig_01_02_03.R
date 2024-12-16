@@ -4,7 +4,7 @@
 # Social-Ecological Networks as Tools for Bat Conservation and Public Health.
 # Global Union of Bat Diversity Networks (GBatNet).
 # See README for further info:
-# https://github.com/renatamuy/bibmap/blob/main/README.md
+# https://github.com/renatamuy/bibmap
 
 
 # Packages

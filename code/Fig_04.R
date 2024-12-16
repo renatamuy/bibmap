@@ -4,7 +4,7 @@
 # Social-Ecological Networks as Tools for Bat Conservation and Public Health.
 # Global Union of Bat Diversity Networks (GBatNet).
 # See README for further info:
-# https://github.com/renatamuy/bibmap/blob/main/README.md
+# https://github.com/renatamuy/bibmap
 
 
 # Packages
@@ -204,10 +204,10 @@ setwd('../figures')
 set.seed(123)
 
 jpeg(filename = 'Figure_04_louvain_clusters.jpg',
-     res = 300,
+     res = 400,
      units = 'px', 
-     width = 5000,
-     height = 5000)
+     width = 7000,
+     height = 7000)
 
 ggraph(author_network, layout = "fr") +  
   geom_edge_link(aes(edge_alpha = 1), show.legend = FALSE) +  
