@@ -43,6 +43,11 @@ if(!require(rcrossref)){
   library(rcrossref)
 }
 
+if(!require(rJava)){
+  install.packages("rJava")
+  library(rJava)
+}
+
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 getwd()
@@ -106,7 +111,7 @@ dois
 # create receiving object
 author_edges <- list()
 
-for (doi in dois) {
+for (doi in dois) { #It may take long to run this part
   authors <- get_authors_from_doi(doi)
   
   # If there are at least two authors, create edges
@@ -122,6 +127,8 @@ for (doi in dois) {
 # Check edges list (characters)
 str(author_edges)
 author_edges
+
+save(author_edges, file = "../data/author_edges.RData") #Just in case
 
 #  edges to df
 edges_df <- do.call(rbind, lapply(author_edges, function(edge) {

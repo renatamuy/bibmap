@@ -7,9 +7,8 @@
 # https://github.com/renatamuy/bibmap
 
 
-# Renata 2024
 # Pre-screening to plan screening strategy
-# Sreening strategy proposed: start with narrower, then go broader
+# Screening strategy proposed: start with narrower, then go broader
 
 
 #Let's get ready for running the code provided here. 
@@ -35,6 +34,11 @@ if(!require(htmlwidgets)){
 if(!require(RColorBrewer)){
   install.packages("RColorBrewer")
   library(RColorBrewer)
+}
+
+if(!require(rJava)){
+  install.packages("rJava")
+  library(rJava)
 }
 
 if(!require(tidyverse)){

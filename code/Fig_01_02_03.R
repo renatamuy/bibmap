@@ -36,6 +36,11 @@ if(!require(rnaturalearth)){
   library(rnaturalearth)
 }
 
+if(!require(rJava)){
+  install.packages("rJava")
+  library(rJava)
+}
+
 if(!require(rnaturalearthdata)){
   install.packages("rnaturalearthdata")
   library(rnaturalearthdata)
