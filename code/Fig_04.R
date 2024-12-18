@@ -65,38 +65,17 @@ tail(df)
 windowsFonts() #Please replace. Does not work in any OS other than Windows.
 
 
-######################## COSTUM FUNCTIONS ######################################
+######################## USER-DEFINED FUNCTIONS ################################
 
 
 # Retrieve author data from a DOI!
-get_authors_from_doi <- function(doi) {
-  # Use cr_works to retrieve metadata of the DOI
-  article_metadata <- cr_works(dois = doi)
-  
-  # Check if there are authors listed
-  if (!is.null(article_metadata$data$author)) {
-    # Extract author names
-    authors <- article_metadata$data$author
-    
-    # Return a vector of author names
-    return(sapply(authors, function(a) paste(a$given, a$family)))
-  } else {
-    return(NULL)
-  }
-}
+source("../code/get_authors_from_doi.R")
 
-#  last name only (optional for aesthetics)
-extract_last_name <- function(name) {
-  sapply(strsplit(name, " "), tail, 1)
-}
+# Last name only (optional for aesthetics)
+source("../code/extract_last_name.R")
 
-# last name and initials only
-extract_last_name_initials <- function(name) {
-  parts <- strsplit(name, " ")[[1]]                       
-  initials <- paste(substr(parts[1:(length(parts) - 1)], 1, 1), collapse = ".")  
-  last_name <- tail(parts, 1)                            
-  return(paste(last_name, paste0(initials, "."), sep = " "))       
-}
+# Last name and initials only
+source("../code/extract_last_name_initials.R")
 
 
 ######################### DOI > AUTHORS ########################################
@@ -128,7 +107,9 @@ for (doi in dois) { #It may take long to run this part
 str(author_edges)
 author_edges
 
-save(author_edges, file = "../data/author_edges.RData") #Just in case
+#Just in case, as the previous steps are very time-consuming
+save(author_edges, file = "../data/author_edges.RData") 
+load("../data/author_edges.RData")
 
 #  edges to df
 edges_df <- do.call(rbind, lapply(author_edges, function(edge) {
@@ -166,6 +147,9 @@ author_network <- graph_from_data_frame(d = edges_df, directed = FALSE)
 
 # Check 
 author_network
+vertex_attr(author_network)
+edge_attr(author_network)
+plot(author_network)
 
 
 ######################### COAUTORSHIP NETWORK ##################################
@@ -192,12 +176,19 @@ plot(author_network,
   layout = layout.fruchterman.reingold, #layout_nicely,                    
   main = "Author Collaborations")
 
-dev.off()
-
 # Modules
-cluster <- cluster_louvain(author_network)
+author_network
+is_bipartite(author_network)
 
+cluster <- cluster_louvain(author_network)
+cluster
+cluster$membership
 length(unique(cluster$membership))
+
+V(author_network)$module <- cluster$membership
+V(author_network)$module
+
+vertex.attributes(author_network)
 
 V(author_network)$color <- cluster$membership
 
@@ -206,11 +197,9 @@ degree_values <- degree(author_network)
 table(degree_values)
 summary(degree_values)
 
-setwd('../figures')
-
 set.seed(123)
 
-jpeg(filename = 'Figure_04_louvain_clusters.jpg',
+jpeg(filename = "../figures/Figure_04_louvain_clusters.jpg",
      res = 400,
      units = 'px', 
      width = 7000,
@@ -221,11 +210,22 @@ ggraph(author_network, layout = "fr") +
   geom_node_point(aes(color = color), size = 5) + 
   geom_text_repel(aes(x = x, y = y, label = name),  
                   size = 2, box.padding = 0.5, point.padding = 0.5) +
-  scale_color_identity() + 
+  scale_colour_gradientn(colours = terrain.colors(length(unique(cluster$membership)))) +
   theme_void() +  
   labs(title = "Author collaboration network")
 
 dev.off()
+
+
+# Original colors
+ggraph(author_network, layout = "fr") +  
+  geom_edge_link(aes(edge_alpha = 1), show.legend = FALSE) +  
+  geom_node_point(aes(color = color), size = 5) + 
+  geom_text_repel(aes(x = x, y = y, label = name),  
+                  size = 2, box.padding = 0.5, point.padding = 0.5) +
+  scale_color_identity() + 
+  theme_void() +  
+  labs(title = "Author collaboration network")
 
 
 ########################### DEGREE #############################################
