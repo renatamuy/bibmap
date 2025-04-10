@@ -121,7 +121,7 @@ edges_df$from <- sapply(edges_df$from, extract_last_name_initials)
 edges_df$to <- sapply(edges_df$to, extract_last_name_initials)
 
 
-# Correcting edges  - STILL BUILDING! Feel free to play with string correction!
+# Correcting edges
 # 'Mello M.A.' to 'Mello M.A.R.'
 # Use anchor $ to avoid nested matches and subs (like M.A.R.R.)
 
@@ -138,7 +138,7 @@ table(edges_df$to== 'Mello M.A.R.R')
 
 unique(edges_df$from)
 
-# Check edges! Not completely done!
+# export edges
 
 xlsx::write.xlsx(edges_df, "edges_df.xlsx")
 
@@ -151,30 +151,12 @@ vertex_attr(author_network)
 edge_attr(author_network)
 plot(author_network)
 
-
 ######################### COAUTORSHIP NETWORK ##################################
 
-
-# plot network
 set.seed(123)
 
 # Export
 setwd('../figures')
-
-# plain viz with reg plot 
-plot(author_network, 
-  vertex.size = 8,    
-  vertex.shape = "circle",
-  vertex.label.cex = 0.9,                 
-  vertex.label.color = "black",         
-  vertex.color = "lightblue",   
-  vertex.label.family= "Arial", vertex.label.cex= .55,
-  vertex.frame.color = "white",             
-  edge.color = adjustcolor("gray", alpha.f = 0.5), 
-  edge.width = 2, 
-  edge.curved=0.3,
-  layout = layout.fruchterman.reingold, #layout_nicely,                    
-  main = "Author Collaborations")
 
 # Modules
 author_network
@@ -197,13 +179,16 @@ degree_values <- degree(author_network)
 table(degree_values)
 summary(degree_values)
 
+# plot network - SLOW!!!!!!!!!!!!!!!
+
 set.seed(123)
 
 jpeg(filename = "../figures/Figure_04_louvain_clusters.jpg",
      res = 400,
      units = 'px', 
      width = 7000,
-     height = 7000)
+     height = 7000, 
+     bg='transparent')
 
 ggraph(author_network, layout = "fr") +  
   geom_edge_link(aes(edge_alpha = 1), show.legend = FALSE) +  
@@ -212,24 +197,13 @@ ggraph(author_network, layout = "fr") +
                   size = 2, box.padding = 0.5, point.padding = 0.5) +
   scale_colour_gradientn(colours = terrain.colors(length(unique(cluster$membership)))) +
   theme_void() +  
-  labs(title = "Author collaboration network")
+  labs(title = "Author collaboration network") + 
+  theme(legend.position = "bottom")
 
 dev.off()
 
-
-# Original colors
-ggraph(author_network, layout = "fr") +  
-  geom_edge_link(aes(edge_alpha = 1), show.legend = FALSE) +  
-  geom_node_point(aes(color = color), size = 5) + 
-  geom_text_repel(aes(x = x, y = y, label = name),  
-                  size = 2, box.padding = 0.5, point.padding = 0.5) +
-  scale_color_identity() + 
-  theme_void() +  
-  labs(title = "Author collaboration network")
-
-
 ########################### DEGREE #############################################
-
+# Supplemental figure
 
 degree_df <- data.frame(degree = degree_values)
 
