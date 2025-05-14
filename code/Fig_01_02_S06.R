@@ -60,7 +60,7 @@ setwd("../data")
 getwd()
 list.files()
 
-df <- xlsx::read.xlsx("bibmap_variables.xlsx", sheetIndex = 1, startRow=1)
+df <- read.csv("bibmap_variables.csv")
 
 tail(df[1:133,])
 
@@ -107,15 +107,18 @@ df$Category <- with(df, case_when(
   grepl("virus|viral|microbiome|parasite|rabies|Hendra|ectoparasite", Links_detail, ignore.case = TRUE) ~ "Host-pathogen \n interactions",
   grepl("species|genotype|genetic|evolutionary", Links_detail, ignore.case = TRUE) ~ "Metacommunities",
   grepl("frugivory|nectarivory|seed dispersal|pollination|feeding", Links_detail, ignore.case = TRUE) ~ "Mutualistic \n interactions",
-  grepl("social|behavior|roosts|shared|foraging|reproduction", Links_detail, ignore.case = TRUE) ~ "Bat societies",
+  grepl("social|behavior|roosts|shared|foraging|reproduction|physical contact", Links_detail, ignore.case = TRUE) ~ "Bat social \n structure",
   grepl("use of|landscape|resource|corridors|tents|roost", Links_detail, ignore.case = TRUE) ~ "Use of space",
-  grepl("coauthorship|transmission|ecological|network|physical contact", Links_detail, ignore.case = TRUE) ~ "Social-ecological \n networks",
+  grepl("coauthorship", Links_detail, ignore.case = TRUE) ~ "Social-ecological \n networks",
   grepl("predation", Links_detail, ignore.case = TRUE) ~ "Predation",
-  grepl("brain", Links_detail, ignore.case = TRUE) ~ "Brain function",
+  grepl("brain", Links_detail, ignore.case = TRUE) ~ "Sensorial \n brain function",
   TRUE ~ NA_character_ # exception
 ))
 
-data.frame(df$Links_detail, df$Category)
+
+df1 %>% filter(Category == "Social-ecological \n networks")
+
+df1 %>% filter(Networks != 'Not SEN')
 
 df1 <- df %>% filter(!is.na(Global.South))
 
@@ -126,15 +129,13 @@ df1 <- df1 %>%  filter(!is.na(Links_EE))
 df1 <- df1 %>% 
   filter(!is.na(Mode), !is.na(Category))
 
-#--- export fig
+df1$Category <- fct_infreq(df1$Category)
 
-jpeg(filename = 'Figure_02.jpg', res = 400, units = 'cm', width = 20, height = 14)
-
- ggplot(df1, aes(x = Category, fill = Mode)) +
+ fig_01B <- ggplot(df1, aes(x = Category, fill = Mode)) +
   geom_bar() + 
   coord_flip() +
   labs(
-    title = "Ecological Network Studies",
+    title = "",
     x = "Topic",
     y = "Number of studies",
     fill = "Network type" 
@@ -146,11 +147,9 @@ jpeg(filename = 'Figure_02.jpg', res = 400, units = 'cm', width = 20, height = 1
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
 
-dev.off()
 
 
-########################## FIGURE 1 ############################################
-
+########################## FIGURE 1A ############################################
 
 dfy <- data.frame(Number = df$Number, Year= df$Year)
 
@@ -180,7 +179,6 @@ plot_data <- data.frame(
 )
 
 # Option - cumulative bar plot
-jpeg(filename = 'Figure_01_cumulative.jpg', res = 400, units = 'cm', width = 14, height = 10 )
 
 ggplot(plot_data, aes(x = Year_Range, y = Cumulative_Count)) +
   geom_bar(stat = "identity", fill = "#7D9D33", color = "#7D9D33") + 
@@ -188,8 +186,6 @@ ggplot(plot_data, aes(x = Year_Range, y = Cumulative_Count)) +
   labs(title = "", x = "Year", y = "Cumulative number of studies") + 
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
-
-dev.off()
 
 
 # Figure 1 - noncumulative
@@ -199,22 +195,28 @@ studies_per_2years$lab <- c('2006-2007','2008-2009', '2010-2011',
                             '2012-2013', '2014-2015', 
                             '2016-2017', '2018-2019', '2020-2021', '2022-2023', '2024')
   
-jpeg(filename = 'Figure_01.jpg', res = 400, units = 'cm', width = 14, height = 10 )
-
-ggplot(studies_per_2years, aes(x = lab, y = Count)) +
+fig_01A <- ggplot(studies_per_2years, aes(x = lab, y = Count)) +
   geom_bar(stat = "identity", fill = "#7D9D33") + #Kakaperized too  
   labs(
     title = "",
     x = "Year",
     y = "Number of studies"
   ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 45, hjust = 1)
+  theme_minimal() + labs(title= '') +
+  theme( axis.text.x = element_text(angle = 45, hjust = 1)
   )
 
-dev.off()
+library(ggpubr)
+ # export
+fig1 <- ggarrange(
+  fig_01A, fig_01B,
+  labels = c("A", "B"),   
+  ncol = 1,            
+  nrow = 2,              
+  common.legend = TRUE,  
+  legend = "bottom"     )
 
+ggsave("Fig_01.jpg", fig1, width = 8, height = 10, dpi = 400)
 
 ########################## FIGURE 3 ############################################
 
@@ -236,7 +238,6 @@ df <- df %>%
 dfg <- df %>%
   mutate(Geo_general = ifelse(grepl("North Africa", Geo_general), "Multicountry", Geo_general))%>% 
   distinct(Number, .keep_all = TRUE)
-
 
 # check
 unique(dfg$Geo_general)
@@ -275,15 +276,13 @@ dfc <- dfc %>%
   filter(!is.na(Geo_general)) %>% 
   arrange(Count)
 
-# export table 
-xlsx::write.xlsx(dfc, "Table_studies_per_country.xlsx")
 
-# Figure03
+# Figure
 
 dfc$Geo_general <- reorder(dfc$Geo_general, -dfc$Count)
 
 # export 
-jpeg(filename = 'Figure_03.jpg', res = 400, units = 'cm', width = 24, height = 20 )
+jpeg(filename = 'Figure_02.jpg', res = 400, units = 'cm', width = 24, height = 20 )
 
 dfc$Geo_general
 
@@ -334,17 +333,35 @@ country_hits <- df %>%
 head(country_hits)
 tail(country_hits)
 
+unique(country_hits$Geo_general)
+
+country_hits <- country_hits %>%
+  mutate(Geo_general = ifelse(Geo_general == "USA", "United States of America", Geo_general))
+
+# England 
+
+country_hits <- country_hits %>%
+ mutate(Geo_general = ifelse(Geo_general == "England", "United Kingdom", Geo_general))
+
+setdiff(country_hits$Geo_general, world$name)
+
 world <- ne_countries(scale = "medium", returnclass = "sf")
 
-world$name
+unique(world$name)
 
+country_hits %>% arrange(desc(Hits))
+
+# export table 
+xlsx::write.xlsx(country_hits, "Table_studies_per_country.xlsx")
+
+#United States of America
 map_data <- world %>%
   left_join(country_hits, by = c("name" = "Geo_general"))
 
 head(map_data)
 
 # Export fig
-jpeg(filename = 'Figure_S4.jpg', res = 400, units = 'cm', width = 14, height = 10 )
+jpeg(filename = 'Figure_S6.jpg', res = 400, units = 'cm', width = 14, height = 10 )
 
 ggplot(map_data) +
   geom_sf(aes(fill = Hits), color = "gray70", size = 0.2) +
@@ -373,4 +390,6 @@ ggplot(map_data) +
   )
 
 dev.off()
+
+
 #-------------------------------------------
