@@ -18,8 +18,17 @@ for (pkg in packages) {
 }
 
 
-devtools::install_github("G-Thomson/Manu")
+if (!requireNamespace("Manu", quietly = TRUE)) {
+  message("'Manu' package not found. Installing from GitHub...")
+  if (!requireNamespace("devtools", quietly = TRUE)) {
+    message("Installing 'devtools' package...")
+    install.packages("devtools")
+  }
+  devtools::install_github("G-Thomson/Manu", force = TRUE)
+}
+
 library(Manu)
+message("'Manu' package loaded successfully.")
 
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
@@ -62,7 +71,7 @@ table(datasum$Global.South)
 table(df$Mode)
 
 table(df$Weight)
-# Most nextwork types evaluated were weighted, followed by binary of both
+# Most network types evaluated were weighted, followed by binary of both
 
 df$Links_EE <- fct_infreq(df$Links_EE)
 
@@ -75,14 +84,22 @@ setwd('../figures')
 table(df$Links_detail)
 
 df$Category <- with(df, case_when(
-  grepl("virus|viral|microbiome|parasite|rabies|Hendra|ectoparasite", Links_detail, ignore.case = TRUE) ~ "Host-pathogen \n interactions",
-  grepl("species|genotype|genetic|evolutionary", Links_detail, ignore.case = TRUE) ~ "Metacommunities",
-  grepl("frugivory|nectarivory|seed dispersal|pollination|feeding", Links_detail, ignore.case = TRUE) ~ "Mutualistic \n interactions",
-  grepl("social|behavior|roosts|shared|foraging|reproduction|physical contact", Links_detail, ignore.case = TRUE) ~ "Bat social \n structure",
-  grepl("use of|landscape|resource|corridors|tents|roost", Links_detail, ignore.case = TRUE) ~ "Use of space",
-  grepl("coauthorship", Links_detail, ignore.case = TRUE) ~ "Social-ecological \n networks",
-  grepl("predation", Links_detail, ignore.case = TRUE) ~ "Predation",
-  grepl("brain", Links_detail, ignore.case = TRUE) ~ "Sensorial \n brain function",
+  grepl("virus|viral|microbiome|parasite|rabies|Hendra|ectoparasite",
+        Links_detail, ignore.case = TRUE) ~ "Host-pathogen \n interactions",
+  grepl("species|genotype|genetic|evolutionary", Links_detail,
+        ignore.case = TRUE) ~ "Metacommunities",
+  grepl("frugivory|nectarivory|seed dispersal|pollination|feeding",
+        Links_detail, ignore.case = TRUE) ~ "Mutualistic \n interactions",
+  grepl("social|behavior|roosts|shared|foraging|reproduction|physical contact",
+        Links_detail, ignore.case = TRUE) ~ "Bat social \n structure",
+  grepl("use of|landscape|resource|corridors|tents|roost", Links_detail,
+        ignore.case = TRUE) ~ "Use of space",
+  grepl("coauthorship", Links_detail,
+        ignore.case = TRUE) ~ "Social-ecological \n networks",
+  grepl("predation", Links_detail,
+        ignore.case = TRUE) ~ "Predation",
+  grepl("brain", Links_detail,
+        ignore.case = TRUE) ~ "Sensorial \n brain function",
   TRUE ~ NA_character_ # exception
 ))
 

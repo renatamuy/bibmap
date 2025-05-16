@@ -121,4 +121,3 @@ wordcloud <- wordcloud2(word_data, color = brewer.pal(8, "Dark2"))
 saveWidget(wordcloud, "../figures//narrower_wordcloud.html",
            selfcontained = TRUE)
 
-################################################################################

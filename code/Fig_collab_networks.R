@@ -79,7 +79,7 @@ author_edges
 
 #Just in case, as the previous steps are very time-consuming
 save(author_edges, file = "../data/author_edges.RData") 
-load("../data/author_edges.RData")
+#load("../data/author_edges.RData")
 
 #  edges to df
 edges_df <- do.call(rbind, lapply(author_edges, function(edge) {
@@ -121,7 +121,9 @@ vertex_attr(author_network)
 edge_attr(author_network)
 plot(author_network)
 
+
 ######################### COAUTORSHIP NETWORK ##################################
+
 
 set.seed(123)
 
@@ -172,8 +174,11 @@ ggraph(author_network, layout = "fr") +
 
 dev.off()
 
+
 ########################### DEGREE #############################################
-# Supplemental figure
+
+
+# Supplementary figure
 
 degree_df <- data.frame(degree = degree_values)
 
