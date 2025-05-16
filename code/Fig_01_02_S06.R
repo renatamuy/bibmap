@@ -1,5 +1,4 @@
-# bibmap
-# This repo is a supplement to the manuscript:
+# This script is a supplement to the manuscript:
 # Muylaert et al., in prep. Connections in the Dark: Network Science and 
 # Social-Ecological Networks as Tools for Bat Conservation and Public Health.
 # Global Union of Bat Diversity Networks (GBatNet).
@@ -7,49 +6,21 @@
 # https://github.com/renatamuy/bibmap
 
 
-# Packages
-if(!require(devtools)){
-  install.packages("devtools")
-  library(devtools)
+#Load or install the required packages
+packages <- c("devtools", "forcats", "ggpubr", "here",
+              "RColorBrewer", "rnaturalearth", "tidyverse")
+
+for (pkg in packages) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg)
+    library(pkg, character.only = TRUE)
+  }
 }
 
-if(!require(forcats)){
-  install.packages("forcats")
-  library(forcats)
-}
-
-if(!require(here)){
-  install.packages("here")
-  library(here)
-}
 
 devtools::install_github("G-Thomson/Manu")
 library(Manu)
 
-if(!require(RColorBrewer)){
-  install.packages("RColorBrewer")
-  library(RColorBrewer)
-}
-
-if(!require(rnaturalearth)){
-  install.packages("rnaturalearth")
-  library(rnaturalearth)
-}
-
-if(!require(rJava)){
-  install.packages("rJava")
-  library(rJava)
-}
-
-if(!require(rnaturalearthdata)){
-  install.packages("rnaturalearthdata")
-  library(rnaturalearthdata)
-}
-
-if(!require(tidyverse)){
-  install.packages("tidyverse")
-  library(tidyverse)
-}
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 getwd()

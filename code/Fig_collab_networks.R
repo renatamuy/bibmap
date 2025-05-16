@@ -1,5 +1,4 @@
-# bibmap
-# This repo is a supplement to the manuscript:
+# This script is a supplement to the manuscript:
 # Muylaert et al., in prep. Connections in the Dark: Network Science and 
 # Social-Ecological Networks as Tools for Bat Conservation and Public Health.
 # Global Union of Bat Diversity Networks (GBatNet).
@@ -7,45 +6,16 @@
 # https://github.com/renatamuy/bibmap
 
 
-# Packages
-if(!require(devtools)){
-  install.packages("devtools")
-  library(devtools)
-}
+#Load or install the required packages
+packages <- c("devtools", "dplyr", "ggraph",
+              "ggrepel", "here", "igraph",
+              "rcrossref", "rJava", "xlsx")
 
-if(!require(dplyr)){
-  install.packages("dplyr")
-  library(dplyr)
-}
-
-if(!require(ggraph)){
-  install.packages("ggraph")
-  library(ggraph)
-}
-
-if(!require(ggrepel)){
-  install.packages("ggrepel")
-  library(ggrepel)
-}
-
-if(!require(here)){
-  install.packages("here")
-  library(here)
-}
-
-if(!require(igraph)){
-  install.packages("igraph")
-  library(igraph)
-}
-
-if(!require(rcrossref)){
-  install.packages("rcrossref")
-  library(rcrossref)
-}
-
-if(!require(rJava)){
-  install.packages("rJava")
-  library(rJava)
+for (pkg in packages) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg)
+    library(pkg, character.only = TRUE)
+  }
 }
 
 

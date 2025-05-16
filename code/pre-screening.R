@@ -1,5 +1,4 @@
-# bibmap
-# This repo is a supplement to the manuscript:
+# This script is a supplement to the manuscript:
 # Muylaert et al., in prep. Connections in the Dark: Network Science and 
 # Social-Ecological Networks as Tools for Bat Conservation and Public Health.
 # Global Union of Bat Diversity Networks (GBatNet).
@@ -21,56 +20,15 @@ getwd()
 rm(list= ls())
 
 #Load or install the required packages
-if(!require(devtools)){
-  install.packages("devtools")
-  library(devtools)
-}
+packages <- c("devtools", "htmlwidgets", "RColorBrewer", "rJava",
+              "tidyverse", "tm", "webshot", "wordcloud2")
 
-if(!require(htmlwidgets)){
-  install.packages("htmlwidgets")
-  library(htmlwidgets)
+for (pkg in packages) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg)
+    library(pkg, character.only = TRUE)
+  }
 }
-
-if(!require(RColorBrewer)){
-  install.packages("RColorBrewer")
-  library(RColorBrewer)
-}
-
-if(!require(rJava)){
-  install.packages("rJava")
-  library(rJava)
-}
-
-if(!require(tidyverse)){
-  install.packages("tidyverse")
-  library(tidyverse)
-}
-
-if(!require(tm)){
-  install.packages("tm")
-  library(tm)
-}
-
-if(!require(tm)){
-  install.packages("tm")
-  library(tm)
-}
-
-if(!require(tidyverse)){
-  install.packages("tidyverse")
-  library(tidyverse)
-}
-
-if(!require(webshot)){
-  install.packages("webshot")
-  library(webshot)
-}
-
-if(!require(wordcloud2)){
-  install.packages("wordcloud2")
-  library(wordcloud2)
-}
-
 
 # comprehensive search using bat OR Chiroptera AND network* OR
 # graph* (1,856 articles)

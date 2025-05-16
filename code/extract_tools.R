@@ -1,9 +1,20 @@
-# Network tools usage table
-# Muylaert et al. 
+# bibmap
+# This script is a supplement to the manuscript:
+# Muylaert et al., in prep. Connections in the Dark: Network Science and 
+# Social-Ecological Networks as Tools for Bat Conservation and Public Health.
+# Global Union of Bat Diversity Networks (GBatNet).
+# See README for further info:
+# https://github.com/renatamuy/bibmap
 
-require(tidyverse)
-#install.packages("writexl")  
-library(writexl)
+#Load or install the required packages
+packages <- c("tidyverse", "writexl")
+
+for (pkg in packages) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg)
+    library(pkg, character.only = TRUE)
+  }
+}
 
 setwd("data")
 getwd()
