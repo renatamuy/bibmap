@@ -66,7 +66,8 @@ The data and scripts provided here aim at making our study reproducible. You wil
 
 ### Files
 
-1.  `README.md`: this readme file.
+1.  `bibmap.Rproj`: R project file.
+2.  `README.md`: this readme file.
 
 ## Instructions
 
