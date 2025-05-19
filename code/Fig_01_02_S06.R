@@ -1,6 +1,5 @@
 # This script is a supplement to the manuscript:
-# Muylaert et al., in prep. Connections in the Dark: Network Science and 
-# Social-Ecological Networks as Tools for Bat Conservation and Public Health.
+# Muylaert et al., in prep. 
 # Global Union of Bat Diversity Networks (GBatNet).
 # See README for further info:
 # https://github.com/renatamuy/bibmap
