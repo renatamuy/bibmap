@@ -102,6 +102,7 @@ df$Category <- with(df, case_when(
   TRUE ~ NA_character_ # exception
 ))
 
+df1 <- df
 
 df1 %>% filter(Category == "Social-ecological \n networks")
 
@@ -134,6 +135,7 @@ df1$Category <- fct_infreq(df1$Category)
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
 
+ fig_01B
 
 
 ########################## FIGURE 1A ############################################
@@ -377,6 +379,5 @@ ggplot(map_data) +
   )
 
 dev.off()
-
 
 #-------------------------------------------
