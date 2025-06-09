@@ -2,7 +2,7 @@
 
 Research weaving (*sensu* [Nakagawa et al. 2019](https://doi.org/10.1016/j.tree.2018.11.007)) applied to our data set compiled through a systematic review. This repo is a supplement to the manuscript:
 
-*Muylaert et al., in prep. Connections in the Dark: Network Science and Social-Ecological Networks as Tools for Bat Conservation and Public Health.*
+*Muylaert et al., in prep. Connections in the Dark: Social-Ecological Networks as a Promising Tool for Bat Conservation and One Health.*
 
 Global Union of Bat Diversity Networks ([GBatNet](https://www.gbatnet.org)).
 
@@ -14,7 +14,7 @@ Contact: [renatamuy\@gmail.com](mailto:renatamuy@gmail.com){.email}.
 
 Originally published on December 13th, 2024.
 
-Run in R version 4.4.3 (2025-02-28) -- "Trophy Case"
+Run in R version 4.5.0 (2025-04-11) -- "How About a Twenty-Six"
 
 ## Disclaimer
 
@@ -87,4 +87,4 @@ This work is a product of the SEN Working Group of the Global Union of Bat Diver
 
 ## Funding
 
-RLM was supported by the Morris Trust through Massey University Foundation. MARM was supported by grants, fellowships, and scholarships given to him and his team by the Alexander von Humboldt Foundation (AvH, 1134644), São Paulo Research Foundation (FAPESP, 2023/03083-6, 2023/02881-6, and 2023/17728-9), National Council for Scientific and Technological Development (CNPq, 305204/2024-6), National Science Foundation (NSF, 2020565), and Consulate General of France in São Paulo. ER was funded by Grant no. 885120 of the European Union’s Horizon 2020 Research and Innovation Programme. We are also grateful to FAPESP, CNPq, Coordination for the Improvement of Higher Education Personnel (CAPES), and German Academic Exchange Service (DAAD) for the scholarships and fellowships granted to our students and postdocs. GBatNet activities are supported by the National Science Foundation AccelNet Award Numbers 2020595, 2020577, and 2020565.
+RLM was supported by the Morris Trust through Massey University Foundation. MARM was supported by grants, fellowships, and scholarships given to him and his team by the Alexander von Humboldt Foundation (AvH, 1134644), São Paulo Research Foundation (FAPESP, 2023/03083-6, 2023/02881-6, and 2023/17728-9), National Council for Scientific and Technological Development (CNPq, 305204/2024-6), and Consulate General of France in São Paulo. CAK thanks the Graduate School in Ecology of the University of São Paulo (PPGE/IB-USP), and São Paulo Research Foundation (FAPESP, 2023/17728-9) for the Ph.D. scholarship. ER was funded by Grant no. 885120 of the European Union’s Horizon 2020 Research and Innovation Programme. We are also grateful to FAPESP, CNPq, Coordination for the Improvement of Higher Education Personnel (CAPES), and German Academic Exchange Service (DAAD) for the scholarships and fellowships granted to our students and postdocs. GBatNet activities are supported by the National Science Foundation AccelNet Award Numbers 2020595, 2020577, and 2020565.
